@@ -1,5 +1,9 @@
 export type CategoryType = 'all' | 'wisata' | 'kuliner' | 'umkm'
 export type SearchModeType = 'recommendation' | 'itinerary'
+export type UserRole = 'tourist' | 'business' | 'admin'
+export type LocaleType = 'id' | 'jv' | 'en'
+export type BookingStatus = 'pending' | 'paid' | 'cancelled' | 'completed'
+export type PaymentMethod = 'qris' | 'gopay' | 'ovo' | 'shopeepay' | 'bank_transfer' | 'credit_card'
 
 export interface BrebesCoordinates {
   lat: number
@@ -14,6 +18,7 @@ export interface BrebesItem {
   reviewsCount?: number
   location: string
   priceRange: string
+  priceNumber?: number
   tags: string[]
   description: string
   highlight: string
@@ -25,6 +30,52 @@ export interface BrebesItem {
   aiNote?: string
   matchScore?: number
   coordinates?: BrebesCoordinates
+  businessOwnerId?: string
+  stockCount?: number
+  isBookable?: boolean
+}
+
+export interface UserProfile {
+  id: string
+  name: string
+  email: string
+  role: UserRole
+  avatar: string
+  personaTags?: string[]
+  businessName?: string
+  favorites?: string[]
+}
+
+export interface ReviewItem {
+  id: string
+  itemId: string
+  userName: string
+  userAvatar: string
+  rating: number
+  date: string
+  comment: string
+  aiSentimentTag: string
+  helpfulCount: number
+}
+
+export interface BookingItem {
+  id: string
+  bookingCode: string
+  itemId: string
+  itemName: string
+  itemCategory: CategoryType
+  userId: string
+  userName: string
+  userEmail: string
+  date: string
+  timeSlot?: string
+  quantity: number
+  unitPrice: number
+  totalPrice: number
+  paymentMethod: PaymentMethod
+  paymentStatus: BookingStatus
+  qrCodeUrl: string
+  createdAt: string
 }
 
 export interface ItinerarySlot {
@@ -48,6 +99,7 @@ export interface AIRecommendationRequest {
   category?: CategoryType
   mode?: SearchModeType
   days?: number
+  personaTags?: string[]
 }
 
 export interface AIRecommendationResponse {
@@ -69,4 +121,3 @@ export interface PromptPreset {
   mode?: SearchModeType
   icon: string
 }
-
