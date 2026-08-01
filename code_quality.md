@@ -56,14 +56,11 @@ app/
 
 ---
 
-## 🛡️ 4. Ketahanan & Penanganan Error (Resilience & Error Handling)
+## 🛡️ 4. Penanganan Error (Error Handling)
 
 1. **Validasi Input Client & Server**:
    - Pengecekan prompt kosong baik di komponen UI maupun di server endpoint [`server/api/generate.post.ts`](file:///home/devstar9615/hackatho-ai-gemma4/server/api/generate.post.ts) dengan respon `400 Bad Request`.
-2. **Zero-Downtime Hybrid Engine**:
-   - Jika API Key Google GenAI / Gemma 4 tersedia, sistem memanggil model `publishers/google/models/gemma-4-26b-a4b-it-maas`.
-   - Jika API Key tidak dikonfigurasi / terjadi rate limit, sistem beralih secara mulus ke **Local Gemma 4 Semantic Engine** berbasis skoring dataset tanpa memutus pengalaman pengguna (*graceful degradation*).
-3. **Pesan Error Interaktif**:
+2. **Pesan Error Interaktif**:
    - Komponen `ErrorAlert.vue` menyediakan pesan kesalahan yang jelas beserta aksi tombol **"Coba Lagi"**.
 
 ---
