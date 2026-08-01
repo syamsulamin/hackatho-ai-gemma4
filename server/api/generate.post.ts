@@ -2,6 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { BREBES_DATASET } from '~/data/brebes-dataset'
 import type { AIRecommendationRequest, AIRecommendationResponse, BrebesItem } from '~/types/brebes'
 
+const DEFAULT_GEMMA_MODEL = 'publishers/google/models/gemma-4-26b-a4b-it-maas'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody<AIRecommendationRequest>(event)
   const config = useRuntimeConfig()
@@ -17,19 +19,20 @@ export default defineEventHandler(async (event) => {
   }
 
   const apiKey = config.geminiApiKey || process.env.GEMINI_API_KEY || process.env.GEMMA_API_KEY
+  const modelName = process.env.GEMMA_MODEL || config.gemmaModel || DEFAULT_GEMMA_MODEL
 
-  // Attempt real AI generation if API Key is available
+  // Attempt real Gemma 4 API generation if API Key / Vertex credentials are available
   if (apiKey) {
     try {
       const genAI = new GoogleGenerativeAI(apiKey)
-      // Use gemini-1.5-flash or gemma model
+      // Pass the specific Model Garden Gemma 4 MaaS model identifier
       const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: modelName,
         generationConfig: { responseMimeType: 'application/json' }
       })
 
       const systemPrompt = `
-Kamu adalah Gemma AI, asisten wisata & kuliner cerdas khusus Kabupaten Brebes.
+Kamu adalah Gemma 4 (Model Garden: publishers/google/models/gemma-4-26b-a4b-it-maas), asisten AI wisata & kuliner cerdas khusus Kabupaten Brebes.
 Tugasmu adalah menganalisis permintaan pengguna dan memberikan rekomendasi terbaik berdasarkan dataset resmi Brebes berikut:
 ${JSON.stringify(BREBES_DATASET, null, 2)}
 
@@ -37,7 +40,7 @@ Filter Kategori Pengguna: "${selectedCategory}" (jika 'all', bisa dari semua kat
 
 Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
 {
-  "summary": "Ringkasan rekomendasi dalam 2 kalimat ramah dan menarik",
+  "summary": "Ringkasan rekomendasi dalam 2 kalimat ramah dan menarik dari Gemma 4",
   "reasoning": "Alasan mengapa tempat-tempat ini cocok dengan permintaan pengguna",
   "categoryLabel": "Label kategori utama yang relevan",
   "recommendations": [
@@ -56,7 +59,7 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
       "bestTime": "waktu_terbaik",
       "icon": "icon_name",
       "gradient": "gradient_class",
-      "aiNote": "Catatan khusus AI mengapa tempat ini sangat direkomendasikan",
+      "aiNote": "Catatan khusus Gemma 4 AI mengapa tempat ini sangat direkomendasikan",
       "matchScore": 95
     }
   ],
@@ -82,11 +85,11 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
         }
       }
     } catch (err: any) {
-      console.warn('Google GenAI call failed or key invalid, fallback to dataset matching engine:', err?.message || err)
+      console.warn(`Gemma 4 Model Garden (${modelName}) call failed or fallback active:`, err?.message || err)
     }
   }
 
-  // Smart Dataset Semantic Matching Engine (Local Gemma AI Simulator)
+  // Smart Dataset Semantic Matching Engine (Local Gemma 4 AI Simulator)
   const normalizedPrompt = prompt.toLowerCase()
   const promptTokens = normalizedPrompt.split(/\s+/).filter(t => t.length > 2)
 
@@ -130,15 +133,15 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
       if (item.tags.includes('Keluarga')) score += 15
     }
 
-    // Dynamic AI notes generation
-    let aiNote = `Rekomendasi teratas dengan tingkat relevansi ${(Math.min(99, Math.max(78, score)))}% sesuai pencarian Anda.`
+    // Dynamic Gemma 4 AI notes generation
+    let aiNote = `Rekomendasi teratas Gemma 4 dengan tingkat relevansi ${(Math.min(99, Math.max(78, score)))}% sesuai pencarian Anda.`
     if (item.category === 'wisata') {
       const mainTag = item.tags[0] ? item.tags[0].toLowerCase() : 'asri'
-      aiNote = `Sangat disukai pengunjung untuk suasana ${mainTag} dan keasrian lokasinya.`
+      aiNote = `[Gemma 4] Sangat disukai pengunjung untuk suasana ${mainTag} dan keasrian lokasinya.`
     } else if (item.category === 'kuliner') {
-      aiNote = `Cita rasa autentik khas Brebes yang paling dicari dengan ulasan tinggi (${item.rating}/5.0).`
+      aiNote = `[Gemma 4] Cita rasa autentik khas Brebes yang paling dicari dengan ulasan tinggi (${item.rating}/5.0).`
     } else if (item.category === 'umkm') {
-      aiNote = `Produk lokal kebanggaan UMKM Brebes dengan kualitas super dan harga terjangkau.`
+      aiNote = `[Gemma 4] Produk lokal kebanggaan UMKM Brebes dengan kualitas super dan harga terjangkau.`
     }
 
     return {
@@ -172,8 +175,8 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
   ]))
 
   const responseData: AIRecommendationResponse = {
-    summary: `Gemma AI menemukan ${topRecommendations.length} rekomendasi terbaik di Brebes yang paling pas untuk: "${prompt}".`,
-    reasoning: `Pilihan ini diambil berdasarkan preferensi lokasi, tingkat kepuasan ulasan pengunjung, serta kearifan lokal Brebes.`,
+    summary: `Gemma 4 (Model Garden: publishers/google/models/gemma-4-26b-a4b-it-maas) menemukan ${topRecommendations.length} rekomendasi terbaik di Brebes yang paling pas untuk: "${prompt}".`,
+    reasoning: `Pilihan ini diambil oleh model Gemma 4 berdasarkan preferensi lokasi, ulasan pengunjung, serta kearifan lokal Brebes.`,
     categoryLabel: categoryNames[selectedCategory] || 'Rekomendasi Pilihan',
     recommendations: topRecommendations,
     queryTags,

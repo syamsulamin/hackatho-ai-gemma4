@@ -11,8 +11,8 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="font-extrabold text-lg sm:text-xl tracking-tight text-white">Brebes<span class="gradient-text-emerald">Go AI</span></span>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              Gemma AI
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" title="Model: publishers/google/models/gemma-4-26b-a4b-it-maas">
+              Gemma 4 MaaS
             </span>
           </div>
           <p class="text-[11px] text-slate-400 hidden sm:block">Panduan Wisata, Kuliner & UMKM Kabupaten Brebes</p>
