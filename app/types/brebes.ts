@@ -28,6 +28,7 @@ export interface BrebesItem {
   icon: string
   gradient: string
   aiNote?: string
+  aiReason?: string
   matchScore?: number
   coordinates?: BrebesCoordinates
   businessOwnerId?: string
