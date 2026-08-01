@@ -95,12 +95,21 @@ export interface ItineraryDay {
   slots: ItinerarySlot[]
 }
 
+export interface OriginRouteInfo {
+  originCity: string
+  travelDuration: string
+  recommendedTransport: string
+  estimatedCostInfo?: string
+  tipsFromOrigin: string
+}
+
 export interface AIRecommendationRequest {
   prompt: string
   category?: CategoryType
   mode?: SearchModeType
   days?: number
   personaTags?: string[]
+  originCity?: string
 }
 
 export interface AIRecommendationResponse {
@@ -109,6 +118,7 @@ export interface AIRecommendationResponse {
   categoryLabel: string
   recommendations: BrebesItem[]
   itinerary?: ItineraryDay[]
+  originRoute?: OriginRouteInfo
   queryTags: string[]
   suggestedFollowups: string[]
   generatedAt: string

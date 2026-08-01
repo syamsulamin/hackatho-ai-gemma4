@@ -282,5 +282,13 @@ export const PROMPT_PRESETS: PromptPreset[] = [
     category: 'all',
     mode: 'itinerary',
     icon: 'i-heroicons-calendar'
+  },
+  {
+    id: 'p6',
+    label: '🚗 Saya dari Jakarta (Rute Perjalanan)',
+    prompt: 'Saya dari Jakarta, buatkan rencana itinerary perjalanan 2 Hari 1 Malam ke Brebes lengkap dengan rute tol dan rekomendasi tempat wisata & kuliner',
+    category: 'all',
+    mode: 'itinerary',
+    icon: 'i-heroicons-paper-airplane'
   }
 ]
