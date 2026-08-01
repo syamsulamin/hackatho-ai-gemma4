@@ -9,6 +9,7 @@ import ErrorAlert from '~/components/ErrorAlert.vue'
 import RecommendationList from '~/components/RecommendationList.vue'
 import AIPersonalizationFeed from '~/components/AIPersonalizationFeed.vue'
 import AIExplorer from '~/components/AIExplorer.vue'
+import AIChatGuide from '~/components/AIChatGuide.vue'
 import AuthModal from '~/components/AuthModal.vue'
 import BookingModal from '~/components/BookingModal.vue'
 import ReviewsModal from '~/components/ReviewsModal.vue'
@@ -163,6 +164,9 @@ function handleOpenReview(item: BrebesItem) {
 
     <!-- VIEW 3: GOVERNMENT ADMIN DASHBOARD -->
     <AdminDashboardView v-else-if="activeView === 'admin'" />
+
+    <!-- Floating AI Tour Guide Chat Drawer -->
+    <AIChatGuide />
 
     <!-- Modals -->
     <AuthModal />
