@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { AIRecommendationResponse } from '~/types/brebes'
+import type { AIRecommendationResponse, BrebesItem } from '~/types/brebes'
 import RecommendationCard from './RecommendationCard.vue'
 import InteractiveMapView from './InteractiveMapView.vue'
 import ItineraryTimeline from './ItineraryTimeline.vue'
@@ -11,6 +11,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'followup', prompt: string): void
+  (e: 'book', item: BrebesItem): void
+  (e: 'review', item: BrebesItem): void
 }>()
 
 const showMap = ref(false)
@@ -74,7 +76,7 @@ const showMap = ref(false)
       </div>
     </div>
 
-    <!-- Interactive Map View (Collapsible / Toggleable) -->
+    <!-- Interactive Map View -->
     <InteractiveMapView
       v-if="showMap || response.recommendations.length > 0"
       :items="response.recommendations"
@@ -82,7 +84,7 @@ const showMap = ref(false)
       :class="{ 'hidden sm:block': !showMap }"
     />
 
-    <!-- AI Generated Itinerary Timeline (If present) -->
+    <!-- AI Generated Itinerary Timeline -->
     <ItineraryTimeline
       v-if="response.itinerary && response.itinerary.length > 0"
       :days="response.itinerary"
@@ -104,6 +106,8 @@ const showMap = ref(false)
           v-for="item in response.recommendations"
           :key="item.id"
           :item="item"
+          @book="emit('book', $event)"
+          @review="emit('review', $event)"
         />
       </div>
     </div>

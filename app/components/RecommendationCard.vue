@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { BrebesItem } from '~/types/brebes'
+import { useAuth } from '~/composables/useAuth'
 
 const props = defineProps<{
   item: BrebesItem
 }>()
 
+const emit = defineEmits<{
+  (e: 'book', item: BrebesItem): void
+  (e: 'review', item: BrebesItem): void
+}>()
+
+const { isFavorite, toggleFavorite } = useAuth()
 const copied = ref(false)
 
 function copyInfo() {
@@ -60,12 +67,23 @@ function getCategoryLabel(category: string) {
             {{ getCategoryLabel(item.category) }}
           </span>
 
-          <span
-            v-if="item.matchScore"
-            class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-950/80 text-emerald-400 border border-emerald-500/30 shadow-md"
-          >
-            🎯 {{ item.matchScore }}% Cocok
-          </span>
+          <div class="flex items-center gap-1.5 z-10">
+            <button
+              type="button"
+              @click="toggleFavorite(item.id)"
+              class="w-7 h-7 rounded-lg bg-slate-950/80 hover:bg-slate-900 backdrop-blur-md border border-white/20 flex items-center justify-center text-rose-400 transition"
+              :title="isFavorite(item.id) ? 'Hapus Favorit' : 'Tambah Favorit'"
+            >
+              <UIcon :name="isFavorite(item.id) ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'" class="w-4 h-4 text-rose-400" />
+            </button>
+
+            <span
+              v-if="item.matchScore"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-950/80 text-emerald-400 border border-emerald-500/30 shadow-md"
+            >
+              🎯 {{ item.matchScore }}% Cocok
+            </span>
+          </div>
         </div>
 
         <div class="flex items-end justify-between z-10">
@@ -85,9 +103,13 @@ function getCategoryLabel(category: string) {
         <h3 class="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug">
           {{ item.name }}
         </h3>
-        <div class="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md text-amber-400 text-xs font-extrabold shrink-0">
+        <button
+          type="button"
+          @click="emit('review', item)"
+          class="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md text-amber-400 text-xs font-extrabold shrink-0 hover:bg-amber-500/20 transition"
+        >
           <span>⭐ {{ item.rating }}</span>
-        </div>
+        </button>
       </div>
 
       <!-- Highlight Quote -->
@@ -138,15 +160,24 @@ function getCategoryLabel(category: string) {
     </div>
 
     <!-- Action Buttons -->
-    <div class="pt-3 border-t border-slate-800/80 flex items-center gap-2">
+    <div class="pt-3 border-t border-slate-800/80 flex items-center gap-2 flex-wrap">
+      <button
+        type="button"
+        @click="emit('book', item)"
+        class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition shadow-md shadow-emerald-500/20 shrink-0"
+      >
+        <UIcon name="i-heroicons-ticket" class="w-4 h-4" />
+        <span>Pesan Tiket</span>
+      </button>
+
       <a
         :href="item.mapsUrl"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition shadow-md shadow-emerald-500/20"
+        class="inline-flex items-center justify-center p-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+        title="Buka Google Maps"
       >
         <UIcon name="i-heroicons-map" class="w-4 h-4" />
-        <span>Google Maps</span>
       </a>
 
       <button
