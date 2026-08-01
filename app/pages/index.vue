@@ -8,6 +8,7 @@ import LoadingSkeleton from '~/components/LoadingSkeleton.vue'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import RecommendationList from '~/components/RecommendationList.vue'
 import AIPersonalizationFeed from '~/components/AIPersonalizationFeed.vue'
+import AIExplorer from '~/components/AIExplorer.vue'
 import AuthModal from '~/components/AuthModal.vue'
 import BookingModal from '~/components/BookingModal.vue'
 import ReviewsModal from '~/components/ReviewsModal.vue'
@@ -117,6 +118,12 @@ function handleOpenReview(item: BrebesItem) {
       <!-- AI Personalization Feed Widget -->
       <AIPersonalizationFeed
         @openBooking="handleOpenBooking"
+      />
+
+      <!-- Instant AI Explorer Section -->
+      <AIExplorer
+        @book="handleOpenBooking"
+        @review="handleOpenReview"
       />
 
       <PromptForm
