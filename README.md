@@ -21,6 +21,19 @@ Aplikasi berbasis **Nuxt 4**, **TypeScript**, dan **Nuxt UI** yang memanfaatkan 
 
 ---
 
+## 🔮 Roadmap & Fitur Selanjutnya (Post-Hackathon)
+
+Rencana pengembangan fitur jangka menengah & panjang lengkap tersedia di [docs/roadmap.md](file:///home/devstar9615/hackatho-ai-gemma4/docs/roadmap.md):
+
+- [x] **Fase 1: Peta Interaktif & Perencana Perjalanan (AI Itinerary Builder)**: Visualisasi Leaflet/Google Maps & pembuatan itinerary perjalanan otomatis (1 Hari, 2H1M, 3H2M) oleh Gemma 4.
+- [ ] **Fase 2: Backend Dinamis & Autentikasi Pengguna**: Migrasi dataset ke Supabase/PostgreSQL & akun wisatawan (bookmark, simpan favorit).
+- [ ] **Fase 3: E-Commerce UMKM & E-Ticketing**: Pemesanan oleh-oleh khas Brebes langsung via WhatsApp/Payment Gateway & pemesanan tiket wisata.
+- [ ] **Fase 4: Ulasan Komunitas & Analisis Sentimen AI**: Rating, ulasan foto dari pengunjung, serta ikhtisar sentimen otomatis oleh Gemma 4.
+- [ ] **Fase 5: Portal Admin Dinas Pariwisata & UMKM**: Dashboard analitik tren wisatawan & portal CRUD mandiri bagi UMKM lokal.
+- [ ] **Fase 6: Multi-Bahasa, Voice Input & Offline PWA Mode**: Dukungan Bahasa Jawa/Brebesan & Inggris, pencarian suara, serta akses offline.
+
+---
+
 ## 📁 Struktur Project (Nuxt 4 Clean Architecture)
 
 ```
@@ -48,7 +61,7 @@ hackatho-ai-gemma4/
 │   └── api/
 │       └── generate.post.ts    # Server endpoint for Gemma AI generation
 ├── public/                     # Static assets (favicon, images)
-├── docs/                       # PRD & Documentation
+├── docs/                       # PRD, Demo Guide, Presentation & Roadmap (Post-Hackathon)
 ├── nuxt.config.ts              # Nuxt 4 configuration
 ├── package.json
 └── tsconfig.json

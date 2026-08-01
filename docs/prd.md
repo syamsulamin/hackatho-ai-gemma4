@@ -22,11 +22,23 @@ Tailwind
 Gemma API
 Local JSON Dataset
 
-Tidak perlu:
+Tidak perlu (pada fase Hackathon MVP):
 * Login
 * Database
 * Supabase
 * Admin
 * CRUD
 * Payment
+
+---
+
+## Post-Hackathon Phase Scope & Vision
+Detail peta jalan dan fitur lanjutan pasca-hackathon di dokumentasikan pada [docs/roadmap.md](file:///home/devstar9615/hackatho-ai-gemma4/docs/roadmap.md):
+- **Fase 1**: Interactive Map View (Leaflet/Google Maps) & Multi-Day AI Itinerary Planner.
+- **Fase 2**: Integrasi Backend Supabase/PostgreSQL + PostGIS & User Auth.
+- **Fase 3**: E-Commerce UMKM Brebes (WhatsApp Direct / Midtrans) & E-Ticketing Wisata.
+- **Fase 4**: User Generated Content (UGC) & AI Sentiment Summary.
+- **Fase 5**: Portal Admin Dinas Pariwisata Brebes & Dashboard Analitik.
+- **Fase 6**: Multi-Bahasa (Basa Brebes, ID, EN), AI Voice Input, & Offline PWA Mode.
+
 

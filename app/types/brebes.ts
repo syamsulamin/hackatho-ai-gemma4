@@ -1,4 +1,10 @@
 export type CategoryType = 'all' | 'wisata' | 'kuliner' | 'umkm'
+export type SearchModeType = 'recommendation' | 'itinerary'
+
+export interface BrebesCoordinates {
+  lat: number
+  lng: number
+}
 
 export interface BrebesItem {
   id: string
@@ -18,11 +24,30 @@ export interface BrebesItem {
   gradient: string
   aiNote?: string
   matchScore?: number
+  coordinates?: BrebesCoordinates
+}
+
+export interface ItinerarySlot {
+  time: string
+  title: string
+  itemId?: string
+  locationName: string
+  activity: string
+  estimatedCost: string
+  tips?: string
+}
+
+export interface ItineraryDay {
+  dayNumber: number
+  dayTitle: string
+  slots: ItinerarySlot[]
 }
 
 export interface AIRecommendationRequest {
   prompt: string
   category?: CategoryType
+  mode?: SearchModeType
+  days?: number
 }
 
 export interface AIRecommendationResponse {
@@ -30,6 +55,7 @@ export interface AIRecommendationResponse {
   reasoning: string
   categoryLabel: string
   recommendations: BrebesItem[]
+  itinerary?: ItineraryDay[]
   queryTags: string[]
   suggestedFollowups: string[]
   generatedAt: string
@@ -40,5 +66,7 @@ export interface PromptPreset {
   label: string
   prompt: string
   category: CategoryType
+  mode?: SearchModeType
   icon: string
 }
+
