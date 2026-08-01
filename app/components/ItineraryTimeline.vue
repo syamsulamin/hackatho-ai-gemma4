@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { ItineraryDay } from '~/types/brebes'
+import type { ItineraryDay, OriginRouteInfo } from '~/types/brebes'
 
 defineProps<{
   days: ItineraryDay[]
+  originRoute?: OriginRouteInfo
 }>()
 </script>
 
@@ -15,7 +16,7 @@ defineProps<{
           <UIcon name="i-heroicons-calendar" class="w-5 h-5" />
         </span>
         <div>
-          <h3 class="text-lg font-bold text-white leading-tight">Rencana Itinerary Liburan Gemma 4</h3>
+          <h3 class="text-lg font-bold text-white leading-tight">Rencana Itinerary Perjalanan Gemma 4</h3>
           <p class="text-xs text-slate-400">Rute teratur & efisien waktu disusun cerdas oleh AI</p>
         </div>
       </div>
@@ -23,6 +24,32 @@ defineProps<{
       <span class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
         🗓️ Total {{ days.length }} Hari
       </span>
+    </div>
+
+    <!-- Origin City Route Banner (If available) -->
+    <div v-if="originRoute" class="p-5 rounded-2xl bg-gradient-to-r from-cyan-950/60 via-slate-900 to-slate-950 border border-cyan-500/30 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-extrabold text-cyan-400 uppercase tracking-widest flex items-center gap-1.5">
+          <UIcon name="i-heroicons-paper-airplane" class="w-4 h-4" />
+          <span>Rute Perjalanan Dari {{ originRoute.originCity }}</span>
+        </span>
+        <span class="text-xs font-bold text-slate-300 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+          ⏱️ {{ originRoute.travelDuration }}
+        </span>
+      </div>
+
+      <p class="text-xs text-slate-200 leading-relaxed">
+        <strong>Moda Transportasi:</strong> {{ originRoute.recommendedTransport }}
+      </p>
+
+      <p v-if="originRoute.estimatedCostInfo" class="text-xs text-emerald-400 font-semibold">
+        🏷️ <strong>Estimasi Biaya Perjalanan:</strong> {{ originRoute.estimatedCostInfo }}
+      </p>
+
+      <div class="p-2.5 rounded-xl bg-amber-950/30 border border-amber-500/20 text-xs text-amber-200 flex items-start gap-1.5">
+        <UIcon name="i-heroicons-light-bulb" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+        <span><strong>Tips Berangkat dari {{ originRoute.originCity }}:</strong> {{ originRoute.tipsFromOrigin }}</span>
+      </div>
     </div>
 
     <!-- Timeline Per Day -->

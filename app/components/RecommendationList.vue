@@ -88,6 +88,7 @@ const showMap = ref(false)
     <ItineraryTimeline
       v-if="response.itinerary && response.itinerary.length > 0"
       :days="response.itinerary"
+      :originRoute="response.originRoute"
     />
 
     <!-- Recommendations Grid -->

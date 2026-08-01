@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { BREBES_DATASET } from '~/data/brebes-dataset'
-import type { AIRecommendationRequest, AIRecommendationResponse, BrebesItem, ItineraryDay } from '~/types/brebes'
+import type { AIRecommendationRequest, AIRecommendationResponse, BrebesItem, ItineraryDay, OriginRouteInfo } from '~/types/brebes'
 
 const DEFAULT_GEMMA_MODEL = 'publishers/google/models/gemma-4-26b-a4b-it-maas'
 
@@ -20,7 +20,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const normalizedPrompt = prompt.toLowerCase()
+
+  // Detect Origin City (e.g. "Jakarta", "Semarang", "Bandung", "Cirebon", "Surabaya", "Yogyakarta")
+  let originCity = body?.originCity || ''
+  if (normalizedPrompt.includes('jakarta') || normalizedPrompt.includes('jkt')) originCity = 'Jakarta'
+  else if (normalizedPrompt.includes('semarang')) originCity = 'Semarang'
+  else if (normalizedPrompt.includes('bandung')) originCity = 'Bandung'
+  else if (normalizedPrompt.includes('cirebon')) originCity = 'Cirebon'
+  else if (normalizedPrompt.includes('surabaya')) originCity = 'Surabaya'
+  else if (normalizedPrompt.includes('yogyakarta') || normalizedPrompt.includes('jogja')) originCity = 'Yogyakarta'
+
   const isItineraryMode = requestedMode === 'itinerary' ||
+    originCity !== '' ||
+    normalizedPrompt.includes('dari') ||
     normalizedPrompt.includes('itinerary') ||
     normalizedPrompt.includes('2 hari') ||
     normalizedPrompt.includes('1 hari') ||
@@ -29,7 +41,8 @@ export default defineEventHandler(async (event) => {
     normalizedPrompt.includes('3h2m') ||
     normalizedPrompt.includes('jadwal') ||
     normalizedPrompt.includes('rencana rute') ||
-    normalizedPrompt.includes('trip')
+    normalizedPrompt.includes('trip') ||
+    normalizedPrompt.includes('perjalanan')
 
   const apiKey = config.geminiApiKey || process.env.GEMINI_API_KEY || process.env.GEMMA_API_KEY
   const modelName = process.env.GEMMA_MODEL || config.gemmaModel || DEFAULT_GEMMA_MODEL
@@ -48,6 +61,7 @@ Kamu adalah Gemma 4 (Model Garden: publishers/google/models/gemma-4-26b-a4b-it-m
 Tugasmu adalah menganalisis permintaan pengguna dan memberikan rekomendasi serta jadwal itinerary perjalanan berbasis dataset resmi Brebes berikut:
 ${JSON.stringify(BREBES_DATASET, null, 2)}
 
+Kota Asal Wisatawan: "${originCity || 'Luar Kota'}".
 Filter Kategori Pengguna: "${selectedCategory}" (jika 'all', bisa dari semua kategori).
 Mode Request: "${isItineraryMode ? 'itinerary' : 'recommendation'}".
 
@@ -77,18 +91,25 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
       "coordinates": { "lat": -6.8698, "lng": 109.0425 }
     }
   ],
+  "originRoute": ${originCity ? `{
+    "originCity": "${originCity}",
+    "travelDuration": "Estimasi waktu tempuh dari ${originCity} ke Brebes",
+    "recommendedTransport": "Rekomendasi moda transportasi",
+    "estimatedCostInfo": "Estimasi biaya perjalanan dari ${originCity}",
+    "tipsFromOrigin": "Tips perjalanan berangkat dari ${originCity}"
+  }` : 'null'},
   "itinerary": ${isItineraryMode ? `[
     {
       "dayNumber": 1,
       "dayTitle": "Judul Hari Pertama",
       "slots": [
         {
-          "time": "07.00 - 10.30 WIB",
-          "title": "Aktivitas Pagi",
-          "itemId": "id_item",
-          "locationName": "Nama Lokasi",
-          "activity": "Deskripsi aktivitas",
-          "estimatedCost": "Rp 20.000",
+          "time": "05.00 - 09.00 WIB",
+          "title": "Perjalanan dari ${originCity || 'Kota Asal'}",
+          "itemId": "wisata-kaligua",
+          "locationName": "Ke Brebes",
+          "activity": "Deskripsi perjalanan",
+          "estimatedCost": "Rp 150.000",
           "tips": "Tips kunjungan"
         }
       ]
@@ -181,7 +202,47 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
   filtered.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
   const topRecommendations = filtered.slice(0, isItineraryMode ? 6 : 3)
 
-  // Generate Itinerary Timeline if in Itinerary Mode
+  // Origin City Route Info Generator
+  let originRoute: OriginRouteInfo | undefined = undefined
+  const currentOrigin = originCity || 'Jakarta'
+
+  if (originCity || isItineraryMode) {
+    if (currentOrigin === 'Jakarta') {
+      originRoute = {
+        originCity: 'Jakarta',
+        travelDuration: '~3.5 - 4 Jam via Tol Trans-Jawa',
+        recommendedTransport: '🚗 Mobil (Tol Jakarta-Cikampek -> Tol Cipali -> Exit Pejagan Brebes) ATAU 🚆 Kereta Api (Stasiun Gambir / Pasarsenen -> Stasiun Brebes 3.5 Jam)',
+        estimatedCostInfo: 'Tol Pejagan ~Rp 185.000 | Tiket Kereta ~Rp 160.000 - Rp 280.000',
+        tipsFromOrigin: 'Berangkat dari Jakarta jam 05.30 WIB agar tiba di Brebes jam 09.30 WIB untuk langsung menikmati sarapan Soto Tauco atau menuju Kebun Teh Kaligua!'
+      }
+    } else if (currentOrigin === 'Semarang') {
+      originRoute = {
+        originCity: 'Semarang',
+        travelDuration: '~2 - 2.5 Jam via Tol Trans-Jawa',
+        recommendedTransport: '🚗 Mobil (Tol Semarang - Batang - Tegal - Brebes Exit) ATAU 🚆 Kereta Api (Stasiun Tawang / Poncol -> Stasiun Brebes 2 Jam)',
+        estimatedCostInfo: 'Tol Brebes Timur ~Rp 110.000 | Tiket Kereta ~Rp 90.000 - Rp 150.000',
+        tipsFromOrigin: 'Berangkat pagi dari Semarang untuk pengalaman liburan sejuk di lereng Gunung Slamet Brebes Selatan.'
+      }
+    } else if (currentOrigin === 'Bandung') {
+      originRoute = {
+        originCity: 'Bandung',
+        travelDuration: '~4.5 - 5 Jam via Jalur Sumedang / Tol Cisumdawu',
+        recommendedTransport: '🚗 Mobil via Tol Cisumdawu -> Cirebon -> Brebes Barat / Exit Pejagan',
+        estimatedCostInfo: 'Estimasi Bensin & Tol ~Rp 250.000',
+        tipsFromOrigin: 'Pilihan tepat untuk trip akhir pekan 2 Hari 1 Malam dari Bandung menikmati pantai dan kuliner Sate Blengong.'
+      }
+    } else {
+      originRoute = {
+        originCity: currentOrigin,
+        travelDuration: '~3 - 4 Jam perjalanan',
+        recommendedTransport: '🚗 Kendaraan Pribadi / Bus Interkota / Kereta Api Stasiun Brebes',
+        estimatedCostInfo: 'Bensin / Tiket Transportasi ~Rp 150.000 - Rp 250.000',
+        tipsFromOrigin: 'Gemma 4 menyusun jadwal tiba tepat waktu makan siang kuliner khas Brebes.'
+      }
+    }
+  }
+
+  // Generate Itinerary Timeline
   let generatedItinerary: ItineraryDay[] | undefined = undefined
 
   if (isItineraryMode) {
@@ -201,19 +262,27 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
     generatedItinerary = [
       {
         dayNumber: 1,
-        dayTitle: 'Hari 1: Petualangan Suasana Sejuk & Kuliner Malam Legendaris',
+        dayTitle: `Hari 1: Kedatangan dari ${currentOrigin} & Jelajah Brebes`,
         slots: [
           {
-            time: '07.00 - 11.00 WIB',
-            title: 'Eksplorasi Kebun Teh Pegunungan',
-            itemId: 'wisata-kaligua',
-            locationName: kaliguaName,
-            activity: 'Menikmati pemandangan kebun teh di ketinggian 1.500 mdpl, foto di Goa Jepang, dan minum teh segar.',
-            estimatedCost: 'Rp 25.000',
-            tips: 'Datang lebih pagi untuk mendapatkan pemandangan gumpalan kabut dan udara paling sejuk.'
+            time: '05.30 - 09.30 WIB',
+            title: `Perjalanan dari ${currentOrigin} menuju Brebes`,
+            locationName: `Rute Tol Trans-Jawa / Kereta Api`,
+            activity: `Berangkat dari ${currentOrigin} menuju Brebes. Nikmati pemandangan jalur pantura / tol Pejagan.`,
+            estimatedCost: originRoute?.estimatedCostInfo || 'Rp 180.000',
+            tips: originRoute?.tipsFromOrigin || 'Tiba di Brebes tepat untuk sarapan/makan siang.'
           },
           {
-            time: '12.00 - 13.30 WIB',
+            time: '09.30 - 12.30 WIB',
+            title: 'Udara Sejuk Kebun Teh Pegunungan',
+            itemId: 'wisata-kaligua',
+            locationName: kaliguaName,
+            activity: 'Tiba di Brebes Selatan, menikmati pemandangan kebun teh di ketinggian 1.500 mdpl, foto di Goa Jepang, dan minum teh segar.',
+            estimatedCost: 'Rp 25.000',
+            tips: 'Jalanan menanjak sejuk, siapkan jaket tipis.'
+          },
+          {
+            time: '13.00 - 14.30 WIB',
             title: 'Makan Siang Soto Tauco Gurih',
             itemId: 'kuliner-soto-tauco',
             locationName: sotoName,
@@ -222,7 +291,7 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
             tips: 'Tambahkan emping renyah dan sedikit perasan jeruk nipis untuk rasa umami maksimal.'
           },
           {
-            time: '15.00 - 17.30 WIB',
+            time: '15.30 - 17.30 WIB',
             title: 'Susur Muara & Ekowisata Mangrove',
             itemId: 'wisata-mangrove',
             locationName: mangroveName,
@@ -277,12 +346,12 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
           },
           {
             time: '19.00 - 20.30 WIB',
-            title: 'Belanja Oleh-Oleh Telur Asin & Bawang Goreng',
+            title: `Belanja Oleh-Oleh & Kepulangan ke ${currentOrigin}`,
             itemId: 'kuliner-telur-asin-yes',
             locationName: `${telurName} & ${bawangName}`,
-            activity: 'Membeli Telur Asin Bakar masir berminyak dan Bawang Merah Goreng Super varietas Bima Brebes.',
+            activity: `Membeli Telur Asin Bakar masir berminyak dan Bawang Merah Goreng Super sebelum perjalanan pulang ke ${currentOrigin}.`,
             estimatedCost: 'Rp 50.000 - Rp 100.000',
-            tips: 'Pilih varian Telur Asin Bakar untuk daya tahan perjalanan yang lebih lama.'
+            tips: 'Telur Asin Bakar tahan hingga 10 hari perjalanan luar kota.'
           }
         ]
       })
@@ -291,7 +360,7 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
     if (is3Days) {
       generatedItinerary.push({
         dayNumber: 3,
-        dayTitle: 'Hari 3: Wisata Budaya Batik Salem & Pusat Souvenir',
+        dayTitle: `Hari 3: Wisata Budaya Batik Salem & Kepulangan ke ${currentOrigin}`,
         slots: [
           {
             time: '09.00 - 12.00 WIB',
@@ -308,13 +377,14 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
   }
 
   const categoryNames: Record<string, string> = {
-    all: isItineraryMode ? '🗓️ Perencana Rute & Itinerary Liburan' : 'Wisata, Kuliner & UMKM',
+    all: isItineraryMode ? `🗓️ Rencana Perjalanan Wisatawan dari ${currentOrigin}` : 'Wisata, Kuliner & UMKM',
     wisata: 'Destinasi Wisata Alam & Rekreasi',
     kuliner: 'Kuliner Khas Legendaris',
     umkm: 'Produk & Oleh-Oleh UMKM'
   }
 
   const queryTags = Array.from(new Set([
+    `#DARI_${currentOrigin.toUpperCase()}`,
     isItineraryMode ? '#ITINERARY_BREBES' : 'BREBES',
     selectedCategory !== 'all' ? '#' + selectedCategory.toUpperCase() : '#WISATA_LOKAL',
     ...promptTokens.slice(0, 3).map(t => '#' + t.charAt(0).toUpperCase() + t.slice(1))
@@ -322,20 +392,21 @@ Respons kamu HARUS berformat JSON valid dengan struktur persis seperti ini:
 
   const responseData: AIRecommendationResponse = {
     summary: isItineraryMode
-      ? `Gemma 4 telah menyusun Rencana Itinerary Perjalanan ${generatedItinerary?.length || 1} Hari terstruktur di Brebes untuk: "${prompt}".`
+      ? `Gemma 4 telah menyusun Rencana Itinerary Perjalanan ${generatedItinerary?.length || 1} Hari dari ${currentOrigin} ke Brebes untuk: "${prompt}".`
       : `Gemma 4 (Model Garden: publishers/google/models/gemma-4-26b-a4b-it-maas) menemukan ${topRecommendations.length} rekomendasi terbaik di Brebes yang paling pas untuk: "${prompt}".`,
     reasoning: isItineraryMode
-      ? `Rute ini dirancang Gemma 4 agar efisien dalam jarak tempuh, mengkombinasikan waktu kunjungan terbaik (pagi, siang, sore, malam), serta keseimbangan antara wisata, kuliner, dan belanja oleh-oleh.`
+      ? `Rute dari ${currentOrigin} ini dirancang Gemma 4 agar efisien dalam waktu tempuh tol/kereta, jam tiba kedatangan, serta perpaduan wisata alam, kuliner legendaris, dan toko oleh-oleh.`
       : `Pilihan ini diambil oleh model Gemma 4 berdasarkan preferensi lokasi, ulasan pengunjung, serta kearifan lokal Brebes.`,
     categoryLabel: categoryNames[selectedCategory] || 'Rekomendasi Pilihan',
     recommendations: topRecommendations,
     itinerary: generatedItinerary,
+    originRoute,
     queryTags,
     suggestedFollowups: isItineraryMode
       ? [
-          'Bagaimana rute alternatif jika turun hujan di hari pertama?',
-          'Rekomendasi hotel / penginapan terdekat dari rute ini',
-          'Berapa total estimasi anggaran liburan untuk 2 orang?'
+          `Bagaimana estimasi total biaya bensin & tol dari ${currentOrigin}?`,
+          `Rekomendasi penginapan / hotel terdekat dari rute ini`,
+          `Saran rute perjalanan pulang balik ke ${currentOrigin}`
         ]
       : [
           `Berapa estimasi biaya untuk mengunjungi ${topRecommendations[0]?.name}?`,
