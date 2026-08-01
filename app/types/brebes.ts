@@ -103,6 +103,21 @@ export interface OriginRouteInfo {
   tipsFromOrigin: string
 }
 
+export interface ChatAction {
+  label: string
+  type: 'maps' | 'book' | 'prompt'
+  value: string
+}
+
+export interface ChatMessage {
+  id: string
+  sender: 'user' | 'gemma'
+  text: string
+  timestamp: string
+  actions?: ChatAction[]
+  relatedItem?: BrebesItem
+}
+
 export interface AIRecommendationRequest {
   prompt: string
   category?: CategoryType
