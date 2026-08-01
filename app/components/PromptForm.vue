@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { CategoryType } from '~/types/brebes'
+import { ref, watch } from 'vue'
+import type { CategoryType, SearchModeType } from '~/types/brebes'
 import { PROMPT_PRESETS } from '~/data/brebes-dataset'
 
 const props = defineProps<{
@@ -8,12 +8,13 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'submit', payload: { prompt: string; category: CategoryType }): void
+  (e: 'submit', payload: { prompt: string; category: CategoryType; mode: SearchModeType }): void
   (e: 'clear'): void
 }>()
 
 const promptText = ref('')
 const selectedCategory = ref<CategoryType>('all')
+const selectedMode = ref<SearchModeType>('recommendation')
 
 const categories: { key: CategoryType; label: string; icon: string }[] = [
   { key: 'all', label: 'Semua Kategori', icon: 'i-heroicons-squares-2x2' },
@@ -22,16 +23,18 @@ const categories: { key: CategoryType; label: string; icon: string }[] = [
   { key: 'umkm', label: 'UMKM & Oleh-oleh', icon: 'i-heroicons-shopping-bag' }
 ]
 
-function selectPreset(prompt: string, category: CategoryType) {
+function selectPreset(prompt: string, category: CategoryType, mode?: SearchModeType) {
   promptText.value = prompt
   selectedCategory.value = category
+  if (mode) selectedMode.value = mode
 }
 
 function handleFormSubmit() {
   if (!promptText.value.trim() || props.loading) return
   emit('submit', {
     prompt: promptText.value.trim(),
-    category: selectedCategory.value
+    category: selectedCategory.value,
+    mode: selectedMode.value
   })
 }
 
@@ -51,8 +54,39 @@ function handleKeydown(e: KeyboardEvent) {
 <template>
   <div id="prompt-section" class="max-w-3xl mx-auto px-4">
     <div class="glass-panel p-5 sm:p-7 rounded-2xl border border-slate-800 shadow-2xl relative">
-      <!-- Top Bar: Category Selection Pills -->
-      <div class="mb-5">
+      <!-- Mode Selection Tabs -->
+      <div class="mb-5 flex items-center gap-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800">
+        <button
+          type="button"
+          @click="selectedMode = 'recommendation'"
+          class="flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5"
+          :class="[
+            selectedMode === 'recommendation'
+              ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+              : 'text-slate-400 hover:text-white'
+          ]"
+        >
+          <UIcon name="i-heroicons-sparkles" class="w-4 h-4" />
+          <span>🎯 Rekomendasi Tempat</span>
+        </button>
+
+        <button
+          type="button"
+          @click="selectedMode = 'itinerary'"
+          class="flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5"
+          :class="[
+            selectedMode === 'itinerary'
+              ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20'
+              : 'text-slate-400 hover:text-white'
+          ]"
+        >
+          <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
+          <span>🗓️ Itinerary Planner (1-3 Hari)</span>
+        </button>
+      </div>
+
+      <!-- Top Bar: Category Selection Pills (shown if recommendation mode) -->
+      <div v-if="selectedMode === 'recommendation'" class="mb-5">
         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
           Pilih Fokus Kategori
         </label>
@@ -87,7 +121,7 @@ function handleKeydown(e: KeyboardEvent) {
             v-for="preset in PROMPT_PRESETS"
             :key="preset.id"
             type="button"
-            @click="selectPreset(preset.prompt, preset.category)"
+            @click="selectPreset(preset.prompt, preset.category, preset.mode)"
             class="text-left text-xs bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 px-3 py-1.5 rounded-lg transition-all"
           >
             {{ preset.label }}
@@ -105,7 +139,7 @@ function handleKeydown(e: KeyboardEvent) {
             @keydown="handleKeydown"
             rows="4"
             maxlength="500"
-            placeholder="Tuliskan keinginan liburanmu di sini... (Contoh: Carikan wisata alam sejuk di gunung untuk keluarga dan tempat makan sate blengong terenak dekat alun-alun)"
+            :placeholder="selectedMode === 'itinerary' ? 'Tuliskan rencana liburanmu... (Contoh: Susunkan itinerary 2 Hari 1 Malam di Brebes gabungan wisata alam pegunungan, pantai, kuliner sate blengong, dan belanja telur asin)' : 'Tuliskan keinginan liburanmu di sini... (Contoh: Carikan wisata alam sejuk di gunung untuk keluarga dan tempat makan sate blengong terenak)'"
             class="w-full bg-slate-900/90 border border-slate-700/80 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl p-4 text-sm sm:text-base text-white placeholder-slate-500 resize-none transition duration-200 outline-none"
             :disabled="loading"
           ></textarea>
@@ -146,7 +180,7 @@ function handleKeydown(e: KeyboardEvent) {
               name="i-heroicons-sparkles"
               class="w-5 h-5 text-slate-950"
             />
-            <span>{{ loading ? 'Menganalisis dengan Gemma AI...' : 'Rencanakan dengan AI ✨' }}</span>
+            <span>{{ loading ? 'Menganalisis dengan Gemma AI...' : (selectedMode === 'itinerary' ? 'Susun Itinerary dengan AI 🗓️' : 'Rencanakan dengan AI ✨') }}</span>
           </button>
         </div>
       </form>

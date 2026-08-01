@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { AIRecommendationResponse } from '~/types/brebes'
 import RecommendationCard from './RecommendationCard.vue'
+import InteractiveMapView from './InteractiveMapView.vue'
+import ItineraryTimeline from './ItineraryTimeline.vue'
 
 const props = defineProps<{
   response: AIRecommendationResponse
@@ -9,6 +12,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'followup', prompt: string): void
 }>()
+
+const showMap = ref(false)
 </script>
 
 <template>
@@ -26,9 +31,25 @@ const emit = defineEmits<{
             <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-400">Hasil Analisis Gemma AI</span>
           </div>
 
-          <span class="text-xs font-semibold text-slate-400 bg-slate-900/80 px-3 py-1 rounded-full border border-slate-800">
-            {{ response.categoryLabel }}
-          </span>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="showMap = !showMap"
+              class="text-xs font-bold px-3.5 py-1.5 rounded-xl border transition flex items-center gap-1.5"
+              :class="[
+                showMap
+                  ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-md shadow-emerald-500/20'
+                  : 'bg-slate-900 text-slate-200 border-slate-700 hover:border-emerald-500/40 hover:text-emerald-300'
+              ]"
+            >
+              <UIcon name="i-heroicons-map" class="w-4 h-4" />
+              <span>{{ showMap ? 'Tutup Peta Interaktif' : '🗺️ Buka Peta Interaktif' }}</span>
+            </button>
+
+            <span class="text-xs font-semibold text-slate-400 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800">
+              {{ response.categoryLabel }}
+            </span>
+          </div>
         </div>
 
         <h2 class="text-xl sm:text-2xl font-bold text-white leading-snug">
@@ -53,11 +74,25 @@ const emit = defineEmits<{
       </div>
     </div>
 
+    <!-- Interactive Map View (Collapsible / Toggleable) -->
+    <InteractiveMapView
+      v-if="showMap || response.recommendations.length > 0"
+      :items="response.recommendations"
+      class="transition-all duration-300"
+      :class="{ 'hidden sm:block': !showMap }"
+    />
+
+    <!-- AI Generated Itinerary Timeline (If present) -->
+    <ItineraryTimeline
+      v-if="response.itinerary && response.itinerary.length > 0"
+      :days="response.itinerary"
+    />
+
     <!-- Recommendations Grid -->
     <div>
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <span>Rekomendasi Pilihan Terbaik</span>
+          <span>Rekomendasi Pilihan Teratas</span>
           <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-emerald-400 border border-slate-700">
             {{ response.recommendations.length }} Tempat
           </span>

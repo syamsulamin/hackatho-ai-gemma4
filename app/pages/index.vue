@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
-import type { AIRecommendationResponse, CategoryType } from '~/types/brebes'
+import type { AIRecommendationResponse, CategoryType, SearchModeType } from '~/types/brebes'
 import HeroSection from '~/components/HeroSection.vue'
 import PromptForm from '~/components/PromptForm.vue'
 import LoadingSkeleton from '~/components/LoadingSkeleton.vue'
@@ -12,21 +12,24 @@ const error = ref<string | null>(null)
 const aiResponse = ref<AIRecommendationResponse | null>(null)
 const currentPrompt = ref('')
 const currentCategory = ref<CategoryType>('all')
+const currentMode = ref<SearchModeType>('recommendation')
 
 const resultsAnchor = ref<HTMLElement | null>(null)
 
-async function handleGenerate(payload: { prompt: string; category: CategoryType }) {
+async function handleGenerate(payload: { prompt: string; category: CategoryType; mode?: SearchModeType }) {
   loading.value = true
   error.value = null
   currentPrompt.value = payload.prompt
   currentCategory.value = payload.category
+  if (payload.mode) currentMode.value = payload.mode
 
   try {
     const res = await $fetch<{ status: string; data: AIRecommendationResponse }>('/api/generate', {
       method: 'POST',
       body: {
         prompt: payload.prompt,
-        category: payload.category
+        category: payload.category,
+        mode: currentMode.value
       }
     })
 
@@ -57,7 +60,8 @@ function handleClear() {
 function handleFollowup(prompt: string) {
   handleGenerate({
     prompt,
-    category: currentCategory.value
+    category: currentCategory.value,
+    mode: currentMode.value
   })
 }
 
@@ -65,7 +69,8 @@ function handleRetry() {
   if (currentPrompt.value) {
     handleGenerate({
       prompt: currentPrompt.value,
-      category: currentCategory.value
+      category: currentCategory.value,
+      mode: currentMode.value
     })
   }
 }

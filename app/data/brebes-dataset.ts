@@ -17,7 +17,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Agrowisata+Kaligua+Brebes',
     bestTime: 'Pagi Hari (06.00 - 10.00 WIB)',
     icon: 'i-heroicons-sun',
-    gradient: 'from-emerald-600 to-teal-800'
+    gradient: 'from-emerald-600 to-teal-800',
+    coordinates: { lat: -7.2608, lng: 109.0435 }
   },
   {
     id: 'wisata-mangrove',
@@ -34,7 +35,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Hutan+Mangrove+Pandansari+Brebes',
     bestTime: 'Sore Hari (15.30 - 17.30 WIB)',
     icon: 'i-heroicons-sparkles',
-    gradient: 'from-cyan-600 to-blue-800'
+    gradient: 'from-cyan-600 to-blue-800',
+    coordinates: { lat: -6.8041, lng: 109.0351 }
   },
   {
     id: 'wisata-randusanga',
@@ -51,7 +53,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Pantai+Randusanga+Indah+Brebes',
     bestTime: 'Sore Hari menjelang Sunset',
     icon: 'i-heroicons-globe-alt',
-    gradient: 'from-amber-500 to-orange-700'
+    gradient: 'from-amber-500 to-orange-700',
+    coordinates: { lat: -6.8115, lng: 109.0622 }
   },
   {
     id: 'wisata-curug-cantel',
@@ -68,7 +71,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Curug+Cantel+Brebes',
     bestTime: 'Pagi - Siang Hari',
     icon: 'i-heroicons-bolt',
-    gradient: 'from-blue-600 to-indigo-900'
+    gradient: 'from-blue-600 to-indigo-900',
+    coordinates: { lat: -7.1822, lng: 109.1105 }
   },
   {
     id: 'wisata-waduk-penjalin',
@@ -85,7 +89,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Waduk+Penjalin+Brebes',
     bestTime: 'Sore Hari (16.00 WIB)',
     icon: 'i-heroicons-cloud',
-    gradient: 'from-teal-500 to-emerald-800'
+    gradient: 'from-teal-500 to-emerald-800',
+    coordinates: { lat: -7.2514, lng: 109.0232 }
   },
   {
     id: 'wisata-pasir-gibug',
@@ -102,7 +107,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Pasir+Gibug+Brebes',
     bestTime: 'Pagi atau Sore Hari',
     icon: 'i-heroicons-academic-cap',
-    gradient: 'from-fuchsia-600 to-pink-800'
+    gradient: 'from-fuchsia-600 to-pink-800',
+    coordinates: { lat: -7.2589, lng: 108.9892 }
   },
 
   // KULINER
@@ -121,7 +127,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Sate+Blengong+Mas+Yanto+Brebes',
     bestTime: 'Malam Hari (17.00 - 23.00 WIB)',
     icon: 'i-heroicons-fire',
-    gradient: 'from-rose-600 to-red-800'
+    gradient: 'from-rose-600 to-red-800',
+    coordinates: { lat: -6.8698, lng: 109.0425 }
   },
   {
     id: 'kuliner-telur-asin-yes',
@@ -138,7 +145,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Toko+Telur+Asin+YES+Brebes',
     bestTime: 'Setiap Hari (08.00 - 21.00 WIB)',
     icon: 'i-heroicons-shopping-bag',
-    gradient: 'from-amber-500 to-yellow-700'
+    gradient: 'from-amber-500 to-yellow-700',
+    coordinates: { lat: -6.8711, lng: 109.0418 }
   },
   {
     id: 'kuliner-soto-tauco',
@@ -155,7 +163,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Soto+Tauco+Brebes',
     bestTime: 'Pagi & Siang Hari',
     icon: 'i-heroicons-heart',
-    gradient: 'from-orange-600 to-red-700'
+    gradient: 'from-orange-600 to-red-700',
+    coordinates: { lat: -6.8732, lng: 109.0460 }
   },
   {
     id: 'kuliner-rujak-belut',
@@ -172,7 +181,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Rujak+Belut+Cigedog+Brebes',
     bestTime: 'Makan Siang (11.00 - 15.00 WIB)',
     icon: 'i-heroicons-fire',
-    gradient: 'from-red-600 to-amber-800'
+    gradient: 'from-red-600 to-amber-800',
+    coordinates: { lat: -6.9189, lng: 108.8712 }
   },
 
   // UMKM & OLEH-OLEH
@@ -191,7 +201,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Batik+Salem+Brebes',
     bestTime: 'Jam Kerja (08.00 - 16.00 WIB)',
     icon: 'i-heroicons-paint-brush',
-    gradient: 'from-purple-600 to-indigo-800'
+    gradient: 'from-purple-600 to-indigo-800',
+    coordinates: { lat: -7.1554, lng: 108.8251 }
   },
   {
     id: 'umkm-bawang-goreng',
@@ -208,7 +219,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Sentra+Bawang+Merah+Brebes',
     bestTime: 'Setiap Hari',
     icon: 'i-heroicons-star',
-    gradient: 'from-yellow-600 to-amber-800'
+    gradient: 'from-yellow-600 to-amber-800',
+    coordinates: { lat: -6.8833, lng: 108.9950 }
   },
   {
     id: 'umkm-crispy-telurasin',
@@ -225,7 +237,8 @@ export const BREBES_DATASET: BrebesItem[] = [
     mapsUrl: 'https://maps.google.com/?q=Pusat+Oleh+Oleh+UMKM+Brebes',
     bestTime: 'Setiap Hari',
     icon: 'i-heroicons-gift',
-    gradient: 'from-emerald-500 to-teal-700'
+    gradient: 'from-emerald-500 to-teal-700',
+    coordinates: { lat: -6.8715, lng: 109.0430 }
   }
 ]
 
@@ -235,6 +248,7 @@ export const PROMPT_PRESETS: PromptPreset[] = [
     label: '🌿 Wisata Sejuk Keluarga',
     prompt: 'Rekomendasikan destinasi wisata alam bernuansa sejuk yang cocok untuk liburan keluarga di Brebes',
     category: 'wisata',
+    mode: 'recommendation',
     icon: 'i-heroicons-sun'
   },
   {
@@ -242,6 +256,7 @@ export const PROMPT_PRESETS: PromptPreset[] = [
     label: '🍢 Kuliner Khas Malam Hari',
     prompt: 'Apa saja makanan khas Brebes paling legendaris yang wajib dicoba malam hari dekat Alun-alun?',
     category: 'kuliner',
+    mode: 'recommendation',
     icon: 'i-heroicons-fire'
   },
   {
@@ -249,13 +264,23 @@ export const PROMPT_PRESETS: PromptPreset[] = [
     label: '🎁 Oleh-Oleh & Kerajinan',
     prompt: 'Rekomendasi oleh-oleh dan kerajinan tangan UMKM khas Brebes untuk dibawa pulang ke luar kota',
     category: 'umkm',
+    mode: 'recommendation',
     icon: 'i-heroicons-shopping-bag'
   },
   {
     id: 'p4',
-    label: '🗺️ Rute Liburan 1 Hari',
-    prompt: 'Buatkan rencana rute wisata 1 hari lengkap: pagi ke bukit/teh, siang makan soto, sore pantai, dan malam beli telur asin',
+    label: '🗓️ Trip 1 Hari (Full Day)',
+    prompt: 'Buatkan rencana itinerary trip 1 hari di Brebes: Pagi ke Kebun Teh Kaligua, siang Soto Tauco, sore Hutan Mangrove Pandansari, malam Sate Blengong & Telur Asin',
     category: 'all',
+    mode: 'itinerary',
     icon: 'i-heroicons-map'
+  },
+  {
+    id: 'p5',
+    label: '🏕️ Trip 2 Hari 1 Malam (2H1M)',
+    prompt: 'Susunkan itinerary liburan 2 Hari 1 Malam di Brebes gabungan wisata alam pegunungan, pantai, kuliner legendaris, dan belanja oleh-oleh UMKM',
+    category: 'all',
+    mode: 'itinerary',
+    icon: 'i-heroicons-calendar'
   }
 ]
